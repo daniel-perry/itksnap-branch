@@ -432,12 +432,6 @@ GuidedNativeImageIO
     m_NativeImage = image;
     */
 
-    size_t nd = m_IOBase->GetNumberOfDimensions(); 
-    if(nd > 3)
-    {
-      m_IOBase->SetVectorLength(3);
-    }
-
     typedef itk::ImageFileReader<NativeImageType> ReaderType;
     typename ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName(FileName);
