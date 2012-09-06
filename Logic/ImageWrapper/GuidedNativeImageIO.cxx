@@ -58,6 +58,7 @@
 #include "itkImageIOFactory.h"
 #include "itkGDCMSeriesFileNames.h"
 #include "itkImageToVectorImageFilter.h"
+#include "itkImageFileReader.h"
 
 #include "itkMinimumMaximumImageCalculator.h"
 #include "itkShiftScaleImageFilter.h"
@@ -386,6 +387,7 @@ GuidedNativeImageIO
     // happens for GIPL). So we copy some of the code from ImageFileReader
 
     // Create the native image
+    /*
     typename NativeImageType::Pointer image = NativeImageType::New();
 
     // Initialize the direction and spacing, etc
@@ -428,19 +430,28 @@ GuidedNativeImageIO
     // Read the image into the buffer
     m_IOBase->Read(image->GetBufferPointer());
     m_NativeImage = image;
-    
-    /*
-    typedef ImageFileReader<NativeImageType> ReaderType;
+    */
+
+    size_t nd = m_IOBase->GetNumberOfDimensions(); 
+    if(nd > 3)
+    {
+      m_IOBase->SetVectorLength(3);
+    }
+
+    typedef itk::ImageFileReader<NativeImageType> ReaderType;
     typename ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName(FileName);
     reader->SetImageIO(m_IOBase);
     reader->Update();
+    std::cout << "size: " << reader->GetOutput()->GetLargestPossibleRegion().GetSize() << std::endl;
+    typename ReaderType::OutputImageType::IndexType debug;
+    debug.Fill(10);
+    std::cout << "pixel: " << reader->GetOutput()->GetPixel(debug) << std::endl;
     m_NativeImage = reader->GetOutput();
-    */
     }   
 
   // Disconnect the image from the readers, allowing them to be deleted
-  // m_NativeImage->DisconnectPipeline();
+   m_NativeImage->DisconnectPipeline();
 
   // Sometimes images have negative voxel spacing, which SNAP does not recognize
   // Check if voxel spacings need to be regularized
