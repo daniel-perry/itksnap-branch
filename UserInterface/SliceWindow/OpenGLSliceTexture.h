@@ -77,22 +77,25 @@ public:
     // TODO: figure out a better way to do this..
     // need to interpret data as floats for vector orientation image,
     // but need unsigned char data for the opengl texture of the image.
+    // this is very innefficient...
     typedef itk::Image<TPixel,2> ImageType;
-    typename ImageType::SizeType size = inImage->GetLargestPossibleRegion().GetSize();
+    typename ImageType::RegionType region = inImage->GetLargestPossibleRegion();
+    //typename ImageType::RegionType region = inImage->GetBufferedRegion();
+    typename ImageType::SizeType size = region.GetSize();
+    typename ImageType::IndexType regionIndex = region.GetIndex();
     unsigned char * buffer = new unsigned char [ size[0] * size[1] * m_GlComponents ];
     for(size_t i=0; i<size[0]; ++i)
     {
       for(size_t j=0; j<size[1]; ++j)
       {
         typename ImageType::IndexType index;
-        index[0] = i;
-        index[1] = j;
+        index[0] = regionIndex[0] + i;
+        index[1] = regionIndex[1] + j;
         typename ImageType::PixelType pixel = inImage->GetPixel(index);
-        size_t b = size[1]*i+j;
-        //size_t b = size[0]*j+i;
+        size_t b = m_GlComponents*size[0]*j+i*m_GlComponents;
         for(size_t k=0; k<m_GlComponents; ++k)
         {
-          buffer[b+k] = static_cast<unsigned char>(255*pixel[k]);
+          buffer[b+k] = static_cast<unsigned char>(pixel[k]);
         }
       }
     }

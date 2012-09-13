@@ -68,10 +68,13 @@ OpenGLSliceTexture
   {
   case GL_LUMINANCE:
     std::cout << "luminance" << std::endl;
+    break;
   case GL_RGB:
     std::cout << "rgb" << std::endl;
+    break;
   case GL_RGBA:
     std::cout << "rgba" << std::endl;
+    break;
   default:
     std::cout<< "unknown" << std::endl;
   }
@@ -165,6 +168,37 @@ OpenGLSliceTexture
   glTexImage2D(GL_TEXTURE_2D, 0, m_GlComponents,
     m_TextureSize(0), m_TextureSize(1),
     0, m_GlFormat, m_GlType, NULL);
+
+
+  std::cout << "components: " << m_GlComponents << std::endl;
+  std::cout << "format: ";
+  switch(m_GlFormat)
+  {
+  case GL_LUMINANCE:
+    std::cout << "luminance" << std::endl;
+    break;
+  case GL_RGB:
+    std::cout << "rgb" << std::endl;
+    break;
+  case GL_RGBA:
+    std::cout << "rgba" << std::endl;
+    break;
+  default:
+    std::cout<< "unknown" << std::endl;
+  }
+  std::cout << "type: ";
+  switch(m_GlType)
+  {
+  case GL_UNSIGNED_BYTE:
+    std::cout << "unsigned byte" << std::endl;
+    break;
+  case GL_FLOAT:
+    std::cout << "float" << std::endl;
+    break;
+  default:
+    std::cout<< "unknown" << std::endl;
+  }
+
 
   // Copy a subtexture of correct size into the image
   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, szImage[0], szImage[1],
