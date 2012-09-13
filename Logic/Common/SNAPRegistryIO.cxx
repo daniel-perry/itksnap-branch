@@ -429,7 +429,7 @@ SNAPRegistryIO
 
   // First of all, make sure that the image referred to in the association file
   // matches the image currently loaded
-  Vector3i xxx=iris_vector_fixed<int,3>(7);
+  //Vector3i xxx=iris_vector_fixed<int,3>(7);
   Vector3i dims = (registry["Files.Grey.Dimensions"])[Vector3i(0)];
   if(dims != to_int(app->GetIRISImageData()->GetVolumeExtents()))
     return false;

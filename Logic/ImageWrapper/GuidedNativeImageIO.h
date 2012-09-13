@@ -294,13 +294,29 @@ public:
 };
 
 // Functor used for scalar to array casting
-template<class TPixel, unsigned int VDim> class CastToArrayFunctor
+template<class TPixel, unsigned int VDim> 
+class CastToArrayFunctor
 {
 public:
   template<class TNative> void operator()(TNative *src, TPixel *trg)
     { for(unsigned int i = 0; i < VDim; i++) (*trg)[i] = (typename TPixel::ComponentType) src[i]; }
   size_t GetNumberOfDimensions() { return VDim; }
 };
+// partial template specialization:
+template<unsigned int VDim> 
+class CastToArrayFunctor<itk::VariableLengthVector<float>, VDim>
+{
+public:
+  typedef itk::VariableLengthVector<float> TPixel;
+  template<class TNative> void operator()(TNative *src, TPixel *trg)
+    { 
+      trg->SetSize(VDim); // VariableLengthVector needs size specified before accessing.
+      for(unsigned int i = 0; i < VDim; i++) 
+        (*trg)[i] = (typename TPixel::ComponentType) src[i]; 
+    }
+  size_t GetNumberOfDimensions() { return VDim; }
+};
+
 
 /**
  * \class CastNativeImageToRGB
@@ -310,6 +326,17 @@ public:
 template<typename TRGBPixel>
 class CastNativeImageToRGB : 
   public CastNativeImageBase<TRGBPixel, CastToArrayFunctor<TRGBPixel, 3> > {};
+
+/**
+ * \class CastNativeImageToVector
+ * \brief An adapter class that casts a native-format image from 
+ * GuidedNativeImageIO to a Vector image
+ */
+// TODO: may need to add a SetSize on the VariableLengthVector elements of the new image?
+//       ---> otherwise you may get a ptr out of bounds error...
+template<typename TVectorPixel>
+class CastNativeImageToVector : 
+  public CastNativeImageBase<TVectorPixel, CastToArrayFunctor<TVectorPixel, 3> > {};
 
 
 /**

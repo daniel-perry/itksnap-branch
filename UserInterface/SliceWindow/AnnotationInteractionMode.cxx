@@ -184,8 +184,8 @@ AnnotationInteractionMode
     // Compute the offset of 5 screen pixels
     Vector3f v_offset = 
       m_Parent->MapWindowToSlice(Vector2f(5.f,5.f)) - m_Parent->MapWindowToSlice(Vector2f(0.f,0.f));
-    Vector3f v_dims = 
-      m_Parent->MapWindowToSlice(Vector2f(48.f,12.f)) - m_Parent->MapWindowToSlice(Vector2f(0.f,0.f));
+    //Vector3f v_dims = 
+    //  m_Parent->MapWindowToSlice(Vector2f(48.f,12.f)) - m_Parent->MapWindowToSlice(Vector2f(0.f,0.f));
 
     // Show the length of the drawing line
     gl_draw(oss_length.str().c_str(),

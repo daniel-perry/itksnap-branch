@@ -48,6 +48,7 @@
 #include "LabelImageWrapper.h"
 #include "GreyImageWrapper.h"
 #include "RGBImageWrapper.h"
+#include "ImageOfVectorsWrapper.h"
 #include "GlobalState.h"
 #include "ImageCoordinateGeometry.h"
 
@@ -69,6 +70,8 @@ public:
   // Image type definitions
   typedef GreyImageWrapper::ImageType GreyImageType;
   typedef RGBImageWrapper::ImageType RGBImageType;
+  //typedef ImageOfVectorsWrapper::ImageType ImageOfVectorsType;
+  typedef itk::OrientedImage<VectorType,3> ImageOfVectorsType;
   typedef LabelImageWrapper::ImageType LabelImageType;
   typedef itk::ImageRegion<3> RegionType;
 
@@ -109,6 +112,15 @@ public:
     assert(m_RGBWrapper.IsInitialized());
     return &m_RGBWrapper;
   }
+
+  /**
+   * Access the Vector image (read only access is allowed)
+   */
+  ImageOfVectorsWrapper* GetVector() {
+    assert(m_VectorWrapper->IsInitialized());
+    return m_VectorWrapper;
+  }
+
 
   /**
    * Access the overlay images (read only access is allowed)
@@ -175,6 +187,7 @@ public:
     const GreyTypeToNativeFunctor &native);
 
   virtual void SetRGBOverlay(RGBImageType *newRGBImage);
+  virtual void SetVectorOverlay(ImageOfVectorsType *newVectorImage);
 
   virtual void UnloadOverlays();
   virtual void UnloadOverlayLast();
@@ -198,6 +211,11 @@ public:
    * Check validity of RGB image
    */
   bool IsRGBLoaded();
+
+  /**
+   * Check validity of Vector image
+   */
+  bool IsVectorLoaded();
 
   /**
    * Check validity of overlay images
@@ -235,6 +253,9 @@ protected:
 
   // Wrapper around the RGB image
   RGBImageWrapper m_RGBWrapper;
+
+  // Wrapper around the Vector image
+  ImageOfVectorsWrapper * m_VectorWrapper;
 
   // A pointer to the 'main' image, i.e., the image that is treated as the
   // reference for all other images. It is typically the grey image, but

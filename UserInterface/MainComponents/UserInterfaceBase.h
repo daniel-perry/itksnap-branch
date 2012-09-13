@@ -122,6 +122,7 @@ public:
   virtual void OnMenuLoadRGB() = 0;
   virtual void OnMenuLoadGreyOverlay() = 0;
   virtual void OnMenuLoadRGBOverlay() = 0;
+  virtual void OnMenuLoadVectorOverlay() = 0;
   virtual void OnMenuUnloadOverlayLast() = 0;
   virtual void OnMenuUnloadOverlays() = 0;
   virtual void OnMenuLoadSegmentation() = 0;

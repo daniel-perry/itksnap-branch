@@ -416,6 +416,12 @@ public:
   /** Get the RGB overlay image file name */
   irisGetStringMacro(RGBOverlayFileName);
 
+  /** Set the Vector overlay image file name */
+  irisSetStringMacro(VectorOverlayFileName);
+
+  /** Get the Vector overlay image file name */
+  irisGetStringMacro(VectorOverlayFileName);
+
   /** Set the segmentation image file name */
   irisSetStringMacro(SegmentationFileName);
 
@@ -595,6 +601,9 @@ private:
 
   // File name of the current RGB overlay file
   std::string m_RGBOverlayFileName;
+
+  // File name of the current RGB overlay file
+  std::string m_VectorOverlayFileName;
 
   // File name of the current grey file
   std::string m_SegmentationFileName;

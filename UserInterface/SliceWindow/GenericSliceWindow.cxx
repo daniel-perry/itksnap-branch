@@ -225,6 +225,7 @@ GenericSliceWindow
       {
       OpenGLSliceTexture *texture = new OpenGLSliceTexture(4, GL_RGBA);
       texture->SetImage((*it)->GetDisplaySlice(m_Id).GetPointer());
+      texture->SetIsVectorOverlay((*it)->IsVectorType());
 	    m_OverlayTextureList.push_back(texture);
       it++;
     	 }
@@ -502,10 +503,10 @@ GenericSliceWindow
   assert(m_ImageSliceIndex >= 0);
 
   // Get the color to use for background
-  Vector3d clrBackground = m_ThumbnailIsDrawing
-    ? m_ParentUI->GetAppearanceSettings()->GetUIElement(
-        SNAPAppearanceSettings::ZOOM_THUMBNAIL).NormalColor
-    : Vector3d(1.0);
+  //Vector3d clrBackground = m_ThumbnailIsDrawing
+  //  ? m_ParentUI->GetAppearanceSettings()->GetUIElement(
+  //      SNAPAppearanceSettings::ZOOM_THUMBNAIL).NormalColor
+  //  : Vector3d(1.0);
 
   OverlayTextureIterator textureIt = m_OverlayTextureList.begin();
   std::list<ImageWrapperBase *>::iterator wrapperIt = m_ImageData->GetOverlays()->begin();
@@ -517,7 +518,14 @@ GenericSliceWindow
     texture->SetInterpolation(
       m_ParentUI->GetAppearanceSettings()->GetGreyInterpolationMode()
       == SNAPAppearanceSettings::LINEAR ? GL_LINEAR : GL_NEAREST);
-    texture->DrawTransparent(wrapper->GetAlpha());
+    if( texture->GetIsVectorOverlay() )
+    {
+      texture->DrawVectors();
+    }
+    else
+    {
+      texture->DrawTransparent(wrapper->GetAlpha());
+    }
     textureIt++;
     wrapperIt++;
     }

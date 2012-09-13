@@ -1090,9 +1090,19 @@ LayerInspectorUILogic
     {
     m_WizImageInfoVoxelValue->value(m_GrpWizImageInfoVoxelPageRGB);
     RGBImageWrapper *rgb = dynamic_cast<RGBImageWrapper *>(m_SelectedWrapper);
-    m_OutImageInfoVoxelRGB[0]->value(rgb->GetVoxel(crosshairs)[0]);
-    m_OutImageInfoVoxelRGB[1]->value(rgb->GetVoxel(crosshairs)[1]);
-    m_OutImageInfoVoxelRGB[2]->value(rgb->GetVoxel(crosshairs)[2]);
+    if(rgb)
+      {
+      m_OutImageInfoVoxelRGB[0]->value(rgb->GetVoxel(crosshairs)[0]);
+      m_OutImageInfoVoxelRGB[1]->value(rgb->GetVoxel(crosshairs)[1]);
+      m_OutImageInfoVoxelRGB[2]->value(rgb->GetVoxel(crosshairs)[2]);
+      }
+    else
+      {
+      ImageOfVectorsWrapper *vec = dynamic_cast<ImageOfVectorsWrapper *>(m_SelectedWrapper);
+      m_OutImageInfoVoxelRGB[0]->value(vec->GetVoxel(crosshairs)[0]);
+      m_OutImageInfoVoxelRGB[1]->value(vec->GetVoxel(crosshairs)[1]);
+      m_OutImageInfoVoxelRGB[2]->value(vec->GetVoxel(crosshairs)[2]);
+      }
     }
 }
 

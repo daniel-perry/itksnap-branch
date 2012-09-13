@@ -99,34 +99,44 @@ public:
   }
 
   // Set the RGB attributes
-  void SetRGB(unsigned int index, unsigned char in_Value) {
+  //void SetRGB(unsigned int index, unsigned char in_Value) {
+  template<class T>
+  void SetRGB(unsigned int index, T in_Value) {
     assert(index < 3);
     m_RGB[index] = in_Value;
   }
 
   // Set all three at once
-  void SetRGB(unsigned char in_Red,unsigned char in_Green,unsigned char in_Blue) {
+  //void SetRGB(unsigned char in_Red,unsigned char in_Green,unsigned char in_Blue) {
+  template<class T>
+  void SetRGB(T in_Red,T in_Green,T in_Blue) {
     m_RGB[0] = in_Red;
     m_RGB[1] = in_Green;
     m_RGB[2] = in_Blue;
   }
 
   // Copy RGB into an array
-  void GetRGBVector(unsigned char array[3]) const {
+  //void GetRGBVector(unsigned char array[3]) const {
+  template<class T>
+  void GetRGBVector(T array[3]) const {
     array[0] = m_RGB[0];
     array[1] = m_RGB[1];
     array[2] = m_RGB[2];
   }
 
   // Copy RGB into an array
-  void SetRGBVector(const unsigned char array[3]) {
+  //void SetRGBVector(const unsigned char array[3]) {
+  template<class T>
+  void SetRGBVector(const T array[3]) {
     m_RGB[0] = array[0];
     m_RGB[1] = array[1];
     m_RGB[2] = array[2];
   }
 
   // Copy RGB into an array
-  void GetRGBAVector(unsigned char array[4]) const {
+  //void GetRGBAVector(unsigned char array[4]) const {
+  template<class T>
+  void GetRGBAVector(T array[4]) const {
     array[0] = m_RGB[0];
     array[1] = m_RGB[1];
     array[2] = m_RGB[2];
@@ -134,7 +144,9 @@ public:
   }
 
   // Copy RGB into an array
-  void SetRGBAVector(const unsigned char array[4]) {
+  //void SetRGBAVector(const unsigned char array[4]) {
+  template<class T>
+  void SetRGBAVector(const T array[4]) {
     m_RGB[0] = array[0];
     m_RGB[1] = array[1];
     m_RGB[2] = array[2];

@@ -60,6 +60,10 @@ public:
   typedef itk::ImageBase<2> ImageBaseType;
   typedef itk::SmartPointer<ImageBaseType> ImageBasePointer;
 
+  // see SpeedImageWrapper.h: SpeedImageWrapper::OverlaySliceType
+  typedef itk::RGBAPixel<float> OverlayPixelType;
+  typedef itk::Image<OverlayPixelType,2> SliceType;
+
   /** Constructor, initializes the texture object */
   OpenGLSliceTexture();
   OpenGLSliceTexture(GLuint, GLenum);
@@ -67,14 +71,49 @@ public:
   /** Destructor, deallocates texture memory */
   virtual ~OpenGLSliceTexture();
   
+  template<class TPixel> 
+  unsigned char * getBuffer(itk::Image<TPixel,2> *inImage)
+  {
+    // TODO: figure out a better way to do this..
+    // need to interpret data as floats for vector orientation image,
+    // but need unsigned char data for the opengl texture of the image.
+    typedef itk::Image<TPixel,2> ImageType;
+    typename ImageType::SizeType size = inImage->GetLargestPossibleRegion().GetSize();
+    unsigned char * buffer = new unsigned char [ size[0] * size[1] * m_GlComponents ];
+    for(size_t i=0; i<size[0]; ++i)
+    {
+      for(size_t j=0; j<size[1]; ++j)
+      {
+        typename ImageType::IndexType index;
+        index[0] = i;
+        index[1] = j;
+        typename ImageType::PixelType pixel = inImage->GetPixel(index);
+        size_t b = size[1]*i+j;
+        //size_t b = size[0]*j+i;
+        for(size_t k=0; k<m_GlComponents; ++k)
+        {
+          buffer[b+k] = static_cast<unsigned char>(255*pixel[k]);
+        }
+      }
+    }
+    return buffer;
+  }
+
   /** Pass in a pointer to a 2D image */
   template<class TPixel> void SetImage(itk::Image<TPixel,2> *inImage)
-    {
+  {
     m_Image = inImage;
     m_Image->GetSource()->UpdateLargestPossibleRegion();
-    m_Buffer = inImage->GetBufferPointer();
-    m_UpdateTime = 0;
+    if(m_Buffer) delete [] reinterpret_cast<unsigned char*>(m_Buffer);
+    m_Buffer = getBuffer(inImage);
+    //m_Buffer = inImage->GetBufferPointer();
+    m_Slice = dynamic_cast<SliceType*>(inImage);
+    if(!m_Slice)
+    {
+      std::cerr << "Error: could not convert image pointer." << std::endl;
     }
+    m_UpdateTime = 0;
+  }
 
   /** Get the dimensions of the texture image, which are powers of 2 */
   irisGetMacro(TextureSize,Vector2ui);
@@ -90,6 +129,9 @@ public:
 
   /** Get the type (e.g. GL_UNSIGNED_INT) in call to glTextureImage */
   irisSetMacro(GlType,GLenum);
+
+  irisGetMacro(IsVectorOverlay,bool);
+  irisSetMacro(IsVectorOverlay,bool);
 
   /**
    * Make sure that the texture is up to date (reflects the image)
@@ -110,11 +152,19 @@ public:
   void Draw(const Vector3d &clrBackground);
 
   /**
+   * Draw vectors over the current slice.
+   */
+  void DrawVectors();
+
+  /**
    * Draw the texture in transparent mode, with given level of alpha blending.
    */
   void DrawTransparent(unsigned char alpha);
 
 private:
+
+  // hack for overlay vectors..
+  bool m_IsVectorOverlay;
   
   // The dimensions of the texture as stored in memory
   Vector2ui m_TextureSize;
@@ -124,6 +174,8 @@ private:
 
   // Pointer to the image's data buffer (this should have been provided by ImageBase)
   void *m_Buffer;
+
+  SliceType * m_Slice;
 
   // The texture number (index)
   GLuint m_TextureIndex;

@@ -40,6 +40,7 @@
 #include "itkCommand.h"
 #include "SystemInterface.h"
 #include "UndoDataManager.h"
+#include "itkVectorImage.h"
 
 // #include "itkImage.h"
 
@@ -78,13 +79,14 @@ public:
   typedef itk::Size<3> SizeType;
   typedef itk::OrientedImage<GreyType,3> GreyImageType;
   typedef itk::OrientedImage<RGBType,3> RGBImageType;
+  typedef itk::OrientedImage<VectorType,3> VectorImageType;
   typedef itk::OrientedImage<LabelType,3> LabelImageType;
   typedef itk::OrientedImage<float,3> SpeedImageType;
   typedef itk::Command CommandType;
   typedef UndoDataManager<LabelType> UndoManagerType;
 
   // The main image can be of these types
-  enum MainImageType { MAIN_SCALAR, MAIN_RGB, MAIN_ANY };
+  enum MainImageType { MAIN_SCALAR, MAIN_RGB, MAIN_VECTOR, MAIN_ANY };
 
   /**
    * Constructor for the IRIS/SNAP application

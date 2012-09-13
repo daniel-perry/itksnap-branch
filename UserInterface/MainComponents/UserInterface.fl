@@ -255,7 +255,12 @@ class UserInterface {open : {public UserInterfaceBase}
               MenuItem m_MenuLoadRGBOverlay {
                 label {Add &RGB Overlay...}
                 callback {this->OnMenuLoadRGBOverlay();}
-                tooltip {Load an RGB image on top of an already loaded grayscale image} xywh {20 20 100 20} shortcut 0x50072 labelsize 12 deactivate divider
+                tooltip {Load an RGB image on top of an already loaded grayscale image} xywh {20 20 100 20} shortcut 0x50072 labelsize 12 deactivate
+              }
+              MenuItem m_MenuLoadVectorOverlay {
+                label {Add &Vector Overlay...}
+                callback {this->OnMenuLoadVectorOverlay();}
+                tooltip {Load a Vector image on top of an already loaded grayscale image} xywh {20 20 100 20} shortcut 0x50072 labelsize 12 activate divider
               }
               MenuItem m_MenuUnloadOverlayLast {
                 label {&Unload Last Overlay}

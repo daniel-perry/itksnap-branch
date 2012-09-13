@@ -224,6 +224,24 @@ GenericImageData
 
 void
 GenericImageData
+::SetVectorOverlay(ImageOfVectorsType *newVectorImage)
+{
+  // Check that the image matches the size of the main image
+  assert(m_MainImageWrapper->GetBufferedRegion() ==
+         newVectorImage->GetBufferedRegion());
+
+  // Pass the image to a Vector image wrapper
+  ImageOfVectorsWrapper *newVectorOverlayWrapper = new ImageOfVectorsWrapper();
+  newVectorOverlayWrapper->SetImage(newVectorImage);
+  newVectorOverlayWrapper->SetAlpha(128);
+
+  m_VectorWrapper = newVectorOverlayWrapper;
+
+  SetOverlayCommon(newVectorOverlayWrapper);
+}
+
+void
+GenericImageData
 ::SetOverlayCommon(ImageWrapperBase *overlay)
 {
   // Sync up spacing between the main and overlay image
@@ -303,6 +321,14 @@ GenericImageData
 {
   return m_RGBWrapper.IsInitialized();
 }
+
+bool
+GenericImageData
+::IsVectorLoaded()
+{
+  return m_VectorWrapper->IsInitialized();
+}
+
 
 bool
 GenericImageData

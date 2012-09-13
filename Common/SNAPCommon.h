@@ -58,6 +58,9 @@ extern std::ostream &snaperr;
 // RGB Pixel support
 #include <itkRGBPixel.h>
 
+// itk VectorImage support
+#include <itkVectorImage.h>
+
 /** Definitions for the string streams, for compatibility */
 typedef itk::OStringStream IRISOStringStream;
 //typedef std::ostringstream IRISOStringStream;
@@ -94,6 +97,7 @@ typedef short GreyType;
 extern const GreyType MAXGREYVAL;
 extern const GreyType MINGREYVAL;
 typedef itk::RGBPixel<unsigned char> RGBType;
+typedef itk::VectorImage<float,3>::PixelType VectorType;
 
 #define MAX_COLOR_LABELS 0xffff
 

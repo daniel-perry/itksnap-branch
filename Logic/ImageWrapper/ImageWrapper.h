@@ -62,7 +62,7 @@ class ImageWrapperBase
 public:
 
   // Definition for the display slice type
-  typedef itk::RGBAPixel<unsigned char> DisplayPixelType;
+  typedef itk::RGBAPixel<float> DisplayPixelType;
   typedef itk::Image<DisplayPixelType,2> DisplaySliceType;
   typedef itk::SmartPointer<DisplaySliceType> DisplaySlicePointer;
 
@@ -85,6 +85,7 @@ public:
   virtual Vector3d TransformNIFTICoordinatesToVoxelIndex(const Vector3d &vNifti) const = 0;
   virtual vnl_matrix_fixed<double, 4, 4> GetNiftiSform() const = 0;
   virtual DisplaySlicePointer GetDisplaySlice(unsigned int dim) const = 0;
+  virtual bool IsVectorType() const { return false; }
 
   // Delete internal data structures
   virtual void Reset() = 0;

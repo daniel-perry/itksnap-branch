@@ -1164,6 +1164,18 @@ IRISApplication
     // Add the image as the current RGB overlay
     m_IRISImageData->SetRGBOverlay(imgRGB);
     }
+  else if(type == MAIN_VECTOR)
+    {
+    // Cast image to RGB
+    CastNativeImageToVector<VectorType> caster;
+    VectorImageType::Pointer imgVector = caster(io);
+
+    // At this point, deallocate the native image, so that we don't use more memory
+    io->DeallocateNativeImage();
+
+    // Add the image as the current Vector overlay
+    m_IRISImageData->SetVectorOverlay(imgVector);
+    }
   else throw itk::ExceptionObject("Unsupported overlay image type");
 
   // for overlay, we don't want to change the cursor location

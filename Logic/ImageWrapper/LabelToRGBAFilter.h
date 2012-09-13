@@ -27,7 +27,7 @@
  */
 class LabelToRGBAFilter: 
   public itk::ImageToImageFilter<
-  itk::Image<LabelType, 2> , itk::Image<itk::RGBAPixel<unsigned char>,2> >
+  itk::Image<LabelType, 2> , itk::Image<itk::RGBAPixel<float>,2> >
 {
 public:
   
@@ -37,7 +37,7 @@ public:
   typedef itk::SmartPointer<InputImageType>           InputImagePointer;
 
   /** Pixel Type of the output image */
-  typedef itk::RGBAPixel<unsigned char>                 OutputPixelType;
+  typedef itk::RGBAPixel<float>                 OutputPixelType;
   typedef itk::Image<OutputPixelType, 2>                OutputImageType;
   typedef itk::SmartPointer<OutputImageType>         OutputImagePointer;
 

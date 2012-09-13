@@ -743,6 +743,7 @@ protected:
   void OnMenuLoadRGB();
   void OnMenuLoadGreyOverlay();
   void OnMenuLoadRGBOverlay();
+  void OnMenuLoadVectorOverlay();
   void OnMenuUnloadOverlayLast();
   void OnMenuUnloadOverlays();
   void OnMenuLoadSegmentation();

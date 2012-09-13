@@ -113,6 +113,7 @@ SET(LOGIC_CXX
   Logic/ImageWrapper/LabelImageWrapper.cxx
   Logic/ImageWrapper/LevelSetImageWrapper.cxx
   Logic/ImageWrapper/RGBImageWrapper.cxx
+  Logic/ImageWrapper/ImageOfVectorsWrapper.cxx
   Logic/ImageWrapper/SpeedColorMap.cxx
   Logic/ImageWrapper/SpeedImageWrapper.cxx
   Logic/LevelSet/SnakeParameters.cxx
@@ -178,6 +179,7 @@ SET(LOGIC_HEADERS
   Logic/ImageWrapper/LabelToRGBAFilter.h
   Logic/ImageWrapper/LevelSetImageWrapper.h
   Logic/ImageWrapper/RGBImageWrapper.h
+  Logic/ImageWrapper/ImageOfVectorsWrapper.h
   Logic/ImageWrapper/ScalarImageWrapper.h
   Logic/ImageWrapper/ScalarImageWrapper.txx
   Logic/ImageWrapper/SpeedColorMap.h

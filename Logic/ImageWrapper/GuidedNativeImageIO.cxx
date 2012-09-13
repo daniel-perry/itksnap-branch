@@ -852,6 +852,7 @@ CastNativeImageToScalar<TPixel>
 
 template class RescaleNativeImageToScalar<GreyType>;
 template class CastNativeImageBase<RGBType, CastToArrayFunctor<RGBType, 3> >;
+template class CastNativeImageBase<VectorType, CastToArrayFunctor<VectorType, 3> >;
 template class CastNativeImageBase<LabelType, CastToScalarFunctor<LabelType> >;
 template class CastNativeImageBase<float, CastToScalarFunctor<float> >;
 

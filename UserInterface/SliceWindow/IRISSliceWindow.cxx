@@ -118,6 +118,19 @@ IRISSliceWindow
   // Call the parent's version of this method
   GenericSliceWindow::DrawOverlays();
 
+  /**
+  if( this->m_ImageData->IsVectorLoaded() ) 
+  {
+    m_
+    // overlay texture
+    m_OverlayTexture->SetIsVectorOverlay(m_ImageData->IsVectorLoaded());
+    // Make sure that the right image is there
+    m_OverlayTexture->SetImage(m_ImageData->GetSpeed()->GetOverlaySlice(m_Id));
+    // Paint the grey texture
+    m_OverlayTexture->DrawTransparent(m_GlobalState->GetSegmentationAlpha());
+  }
+  */
+
   // Draw the polygon
   if(!m_ThumbnailIsDrawing)
     m_PolygonMode->OnDraw();

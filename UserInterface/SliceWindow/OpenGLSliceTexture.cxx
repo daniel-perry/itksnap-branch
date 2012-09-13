@@ -32,8 +32,10 @@
   PURPOSE.  See the above copyright notices for more information. 
 
 =========================================================================*/
-#include "OpenGLSliceTexture.h"
+#include <itkRGBAPixel.h>
+#include <itkImageRegionIteratorWithIndex.h>
 
+#include "OpenGLSliceTexture.h"
 
 OpenGLSliceTexture
 ::OpenGLSliceTexture()
@@ -52,18 +54,33 @@ OpenGLSliceTexture
 
   // Initialize the buffer pointer
   m_Buffer = NULL;
+
+  // default is no.
+  m_IsVectorOverlay = false;
 }
 
 OpenGLSliceTexture
 ::OpenGLSliceTexture(GLuint components, GLenum format)
 {
+  std::cout << "components: " << components << std::endl;
+  std::cout << "format: ";
+  switch(format)
+  {
+  case GL_LUMINANCE:
+    std::cout << "luminance" << std::endl;
+  case GL_RGB:
+    std::cout << "rgb" << std::endl;
+  case GL_RGBA:
+    std::cout << "rgba" << std::endl;
+  default:
+    std::cout<< "unknown" << std::endl;
+  }
   // Set to -1 to force a call to 'generate'
   m_IsTextureInitalized = false;
 
   // Set the update time to -1
   m_UpdateTime = 0;
 
-  // Init the GL settings to uchar, luminance defautls, which are harmless
   m_GlComponents = components;
   m_GlFormat = format;
   m_GlType = GL_UNSIGNED_BYTE;
@@ -71,11 +88,14 @@ OpenGLSliceTexture
 
   // Initialize the buffer pointer
   m_Buffer = NULL;
+  m_IsVectorOverlay = false;
 }
 
 OpenGLSliceTexture
 ::~OpenGLSliceTexture()
 {
+  if(m_Buffer)
+    delete [] reinterpret_cast<unsigned char*>(m_Buffer);
   if(m_IsTextureInitalized)
     glDeleteTextures(1,&m_TextureIndex);
 }
@@ -102,7 +122,11 @@ OpenGLSliceTexture
 
   // Update the image (necessary?)
   if(m_Image->GetSource())
+  {
     m_Image->GetSource()->UpdateLargestPossibleRegion();
+    if(m_Buffer) delete [] reinterpret_cast<unsigned char*>(m_Buffer);
+    m_Buffer = getBuffer(m_Slice);
+  }
 
   // Check if everything is up-to-date and no computation is needed
   if (m_IsTextureInitalized && m_UpdateTime == m_Image->GetPipelineMTime())
@@ -191,6 +215,79 @@ OpenGLSliceTexture
   glPopAttrib();
 }
 
+void DrawLine( float ax, float ay, float bx, float by, int width, int r, int g, int b, int a ) 
+{ 
+    glDisable(GL_TEXTURE_2D); 
+    glEnable(GL_BLEND); 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+    glColor4ub( r, g, b, a); 
+
+    glLineWidth(width); 
+    glBegin(GL_LINES); 
+    glVertex2f( ax, ay); 
+    glVertex2f( bx, by); 
+    glEnd(); 
+
+    glDisable(GL_BLEND); 
+    glEnable(GL_TEXTURE_2D); 
+}  
+
+void DrawRect( float cx, float cy, float w, float h, int r, int g, int b, int a ) 
+{ 
+    glDisable(GL_TEXTURE_2D); 
+    glEnable(GL_BLEND); 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+    glColor4ub( r, g, b, a); 
+
+    glBegin(GL_POLYGON); 
+    glVertex2f( cx-w/2, cy-h/2); 
+    glVertex2f( cx+w/2, cy-h/2); 
+    glVertex2f( cx+w/2, cy+h/2); 
+    glVertex2f( cx-w/2, cy+h/2); 
+    glEnd(); 
+
+    glDisable(GL_BLEND); 
+    glEnable(GL_TEXTURE_2D); 
+}  
+
+
+void
+OpenGLSliceTexture
+::DrawVectors()
+{
+  if( m_Slice )
+  {
+    // map 2d slice coordinates to 2d gl coordinates:
+    int w = m_Image->GetBufferedRegion().GetSize()[0];
+    int h = m_Image->GetBufferedRegion().GetSize()[1];
+    //SliceType::SizeType size = m_Slice->GetBufferedRegion().GetSize();
+    SliceType::SizeType size = m_Slice->GetLargestPossibleRegion().GetSize();
+    float pixelPerWidth = w / static_cast<float>(size[0]);
+    float pixelPerHeight = h / static_cast<float>(size[0]);
+    float xMax = pixelPerWidth / 2.f; // vector starts at center, extends to pixel edge.
+    float yMax = pixelPerHeight / 2.f; // vector starts at center, extends to pixel edge.
+    int r = 255;
+    int g = 100;
+    int b = 50;
+    int a = 100;
+    int line_width = 2;
+    typedef itk::ImageRegionIteratorWithIndex<SliceType> ItType;
+    //ItType it(m_Slice, m_Slice->GetBufferedRegion());
+    ItType it(m_Slice, m_Slice->GetLargestPossibleRegion());
+    for(; !it.IsAtEnd(); ++it)
+    {
+      SliceType::IndexType index = it.GetIndex();
+      SliceType::PixelType pixel = it.Get();
+      // note: just using pixel[0,1] components <==> proj_{e1,e2}(pixel)
+      float ax = (.5+index[0])*pixelPerWidth; 
+      float ay = (.5+index[1])*pixelPerHeight;
+      float bx = ax + pixel[0]*xMax; // pixel is normalized vec component.
+      float by = ay + pixel[1]*yMax; // pixel is normalized vec component.
+      DrawLine( ax,ay, bx,by, line_width, r,g,b,a );
+      DrawRect( ax,ay, 0.1,0.1, r,g,b,a );
+    }
+  }
+}
 
 void
 OpenGLSliceTexture
@@ -232,6 +329,7 @@ OpenGLSliceTexture
   glTexCoord2d(tx,0);
   glVertex2d(w,0);
   glEnd();
+
 
   glPopAttrib();
 }

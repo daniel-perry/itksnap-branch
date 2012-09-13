@@ -4869,6 +4869,62 @@ UserInterfaceLogic
     }
 }
 
+void 
+UserInterfaceLogic
+::OnMenuLoadVectorOverlay() 
+{
+  // Grey image should be loaded
+  assert(m_Driver->GetCurrentImageData()->IsMainLoaded());
+
+  // Should not be in SNAP mode
+  assert(!m_GlobalState->GetSNAPActive());
+
+  // Create the wizard
+  RestrictedImageIOWizardLogic wizVectorOverlayIO;
+  wizVectorOverlayIO.MakeWindow();
+
+  // Allow only 3 components
+  wizVectorOverlayIO.SetNumberOfComponentsRestriction(3);
+
+  // Set up the input wizard with the main image
+  wizVectorOverlayIO.SetMainImage(
+    m_Driver->GetCurrentImageData()->GetMain()->GetImageBase());
+
+  // Set the history for the input wizard
+  wizVectorOverlayIO.SetHistory(
+    m_SystemInterface->GetHistory("VectorOverlay"));
+
+  // Show the input wizard
+  wizVectorOverlayIO.DisplayInputWizard(
+    m_GlobalState->GetVectorOverlayFileName(), "Vector overlay");
+
+  // If the load operation was successful, populate the data and GUI with the
+  // new image
+  if (wizVectorOverlayIO.IsImageLoaded()) 
+    {
+    // Update the system's history list
+    m_SystemInterface->UpdateHistory("VectorOverlay",wizVectorOverlayIO.GetFileName());
+    m_SystemInterface->UpdateHistory("OverlayImage",wizVectorOverlayIO.GetFileName());
+
+    // Send the image and RAI to the IRIS application driver
+    m_Driver->AddIRISOverlayImage(
+      wizVectorOverlayIO.GetNativeImageIO(), IRISApplication::MAIN_VECTOR);
+
+    // Release memory
+    wizVectorOverlayIO.ReleaseImage();
+
+    // Save the filename
+    m_GlobalState->SetVectorOverlayFileName(wizVectorOverlayIO.GetFileName());
+
+    // Update the user interface accordingly
+    OnOverlayImageUpdate();
+ 
+    // Set the state
+    m_Activation->UpdateFlag(UIF_OVERLAY_LOADED, true);
+    }
+}
+
+
 void
 UserInterfaceLogic
 ::OnMenuUnloadOverlayLast()
