@@ -323,7 +323,7 @@ OpenGLSliceTexture
       float bx = ax + x_facing*pixel[x_index]*xMax; // pixel is normalized vec component.
       float by = ay + y_facing*pixel[y_index]*yMax; // pixel is normalized vec component.
       DrawLine( ax,ay, bx,by, line_width, r,g,b,a );
-      DrawRect( ax,ay, 0.1,0.1, r,g,b,a );
+      DrawRect( ax,ay, 0.2,0.2, r,g,b,a );
     }
   }
 }
