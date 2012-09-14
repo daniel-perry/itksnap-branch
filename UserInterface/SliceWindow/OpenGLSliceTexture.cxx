@@ -62,6 +62,7 @@ OpenGLSliceTexture
 OpenGLSliceTexture
 ::OpenGLSliceTexture(GLuint components, GLenum format)
 {
+  /*
   std::cout << "components: " << components << std::endl;
   std::cout << "format: ";
   switch(format)
@@ -78,6 +79,8 @@ OpenGLSliceTexture
   default:
     std::cout<< "unknown" << std::endl;
   }
+  */
+
   // Set to -1 to force a call to 'generate'
   m_IsTextureInitalized = false;
 
@@ -170,6 +173,7 @@ OpenGLSliceTexture
     0, m_GlFormat, m_GlType, NULL);
 
 
+  /*
   std::cout << "components: " << m_GlComponents << std::endl;
   std::cout << "format: ";
   switch(m_GlFormat)
@@ -198,7 +202,7 @@ OpenGLSliceTexture
   default:
     std::cout<< "unknown" << std::endl;
   }
-
+  */
 
   // Copy a subtexture of correct size into the image
   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, szImage[0], szImage[1],
@@ -289,6 +293,7 @@ void
 OpenGLSliceTexture
 ::DrawVectors()
 {
+  Update();
   if( m_Slice )
   {
     // map 2d slice coordinates to 2d gl coordinates:
