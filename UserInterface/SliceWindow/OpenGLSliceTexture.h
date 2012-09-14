@@ -156,8 +156,10 @@ public:
 
   /**
    * Draw vectors over the current slice.
+   * x,y_index: index of the x,y-axis.
+   * x,y_facing: 1 or -1 depending on which orientation.
    */
-  void DrawVectors();
+  void DrawVectors(size_t x_index, size_t y_index, int x_facing, int y_facing);
 
   /**
    * Draw the texture in transparent mode, with given level of alpha blending.

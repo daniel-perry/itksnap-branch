@@ -520,7 +520,12 @@ GenericSliceWindow
       == SNAPAppearanceSettings::LINEAR ? GL_LINEAR : GL_NEAREST);
     if( texture->GetIsVectorOverlay() )
     {
-      texture->DrawVectors();
+      // calc orientation:
+      size_t x_index = m_DisplayToAnatomyTransform.GetCoordinateIndexZeroBased(0);
+      size_t y_index = m_DisplayToAnatomyTransform.GetCoordinateIndexZeroBased(1);
+      int x_facing = m_DisplayToAnatomyTransform.GetCoordinateOrientation(0);
+      int y_facing = m_DisplayToAnatomyTransform.GetCoordinateOrientation(1);
+      texture->DrawVectors(x_index,y_index, x_facing,y_facing);
     }
     else
     {

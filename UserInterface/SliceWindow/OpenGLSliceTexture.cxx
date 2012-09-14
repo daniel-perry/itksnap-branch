@@ -291,7 +291,7 @@ void DrawRect( float cx, float cy, float w, float h, int r, int g, int b, int a 
 
 void
 OpenGLSliceTexture
-::DrawVectors()
+::DrawVectors(size_t x_index, size_t y_index, int x_facing, int y_facing)
 {
   Update();
   if( m_Slice )
@@ -320,8 +320,8 @@ OpenGLSliceTexture
       // note: just using pixel[0,1] components <==> proj_{e1,e2}(pixel)
       float ax = (.5+index[0])*pixelPerWidth; 
       float ay = (.5+index[1])*pixelPerHeight;
-      float bx = ax + pixel[0]*xMax; // pixel is normalized vec component.
-      float by = ay + pixel[1]*yMax; // pixel is normalized vec component.
+      float bx = ax + x_facing*pixel[x_index]*xMax; // pixel is normalized vec component.
+      float by = ay + y_facing*pixel[y_index]*yMax; // pixel is normalized vec component.
       DrawLine( ax,ay, bx,by, line_width, r,g,b,a );
       DrawRect( ax,ay, 0.1,0.1, r,g,b,a );
     }
