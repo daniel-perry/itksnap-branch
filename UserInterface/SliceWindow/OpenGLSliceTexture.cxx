@@ -318,12 +318,14 @@ OpenGLSliceTexture
       SliceType::IndexType index = it.GetIndex();
       SliceType::PixelType pixel = it.Get();
       // note: just using pixel[0,1] components <==> proj_{e1,e2}(pixel)
-      float ax = (.5+index[0])*pixelPerWidth; 
-      float ay = (.5+index[1])*pixelPerHeight;
-      float bx = ax + x_facing*pixel[x_index]*xMax; // pixel is normalized vec component.
-      float by = ay + y_facing*pixel[y_index]*yMax; // pixel is normalized vec component.
+      float cx = (.5+index[0])*pixelPerWidth; 
+      float cy = (.5+index[1])*pixelPerHeight;
+      float ax = cx - x_facing*pixel[x_index]*xMax*.5; // pixel is normalized vec component.
+      float ay = cy - y_facing*pixel[y_index]*yMax*.5; // pixel is normalized vec component.
+      float bx = cx + x_facing*pixel[x_index]*xMax*.5; // pixel is normalized vec component.
+      float by = cy + y_facing*pixel[y_index]*yMax*.5; // pixel is normalized vec component.
       DrawLine( ax,ay, bx,by, line_width, r,g,b,a );
-      DrawRect( ax,ay, 0.2,0.2, r,g,b,a );
+      //DrawRect( ax,ay, 0.2,0.2, r,g,b,a );
     }
   }
 }
