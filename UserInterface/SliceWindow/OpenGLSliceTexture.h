@@ -116,6 +116,7 @@ public:
       std::cerr << "Error: could not convert image pointer." << std::endl;
     }
     m_UpdateTime = 0;
+    m_overlayChanged = true;
   }
 
   /** Get the dimensions of the texture image, which are powers of 2 */
@@ -170,6 +171,10 @@ private:
 
   // hack for overlay vectors..
   bool m_IsVectorOverlay;
+
+  // storing display list for overlay vectors.
+  GLuint m_vectorOverlayList;
+  bool m_overlayChanged;
   
   // The dimensions of the texture as stored in memory
   Vector2ui m_TextureSize;

@@ -57,6 +57,8 @@ OpenGLSliceTexture
 
   // default is no.
   m_IsVectorOverlay = false;
+  m_vectorOverlayList = glGenLists(1);
+  m_overlayChanged = true;
 }
 
 OpenGLSliceTexture
@@ -95,6 +97,8 @@ OpenGLSliceTexture
   // Initialize the buffer pointer
   m_Buffer = NULL;
   m_IsVectorOverlay = false;
+  m_vectorOverlayList = glGenLists(1);
+  m_overlayChanged = true;
 }
 
 OpenGLSliceTexture
@@ -126,18 +130,19 @@ OpenGLSliceTexture
   // Better have an image
   assert(m_Image);
 
-  // Update the image (necessary?)
   if(m_Image->GetSource())
   {
     m_Image->GetSource()->UpdateLargestPossibleRegion();
-    if(m_Buffer) delete [] reinterpret_cast<unsigned char*>(m_Buffer);
-    m_Buffer = getBuffer(m_Slice);
   }
 
   // Check if everything is up-to-date and no computation is needed
   if (m_IsTextureInitalized && m_UpdateTime == m_Image->GetPipelineMTime())
     return;
 
+  if(m_Buffer) delete [] reinterpret_cast<unsigned char*>(m_Buffer);
+  m_Buffer = getBuffer(m_Slice);
+  m_overlayChanged = true;
+    
   // Promote the image dimensions to powers of 2
   itk::Size<2> szImage = m_Image->GetLargestPossibleRegion().GetSize();
   m_TextureSize = Vector2ui(1);
@@ -296,36 +301,46 @@ OpenGLSliceTexture
   Update();
   if( m_Slice )
   {
-    // map 2d slice coordinates to 2d gl coordinates:
-    int w = m_Image->GetBufferedRegion().GetSize()[0];
-    int h = m_Image->GetBufferedRegion().GetSize()[1];
-    //SliceType::SizeType size = m_Slice->GetBufferedRegion().GetSize();
-    SliceType::SizeType size = m_Slice->GetLargestPossibleRegion().GetSize();
-    float pixelPerWidth = w / static_cast<float>(size[0]);
-    float pixelPerHeight = h / static_cast<float>(size[0]);
-    float xMax = pixelPerWidth / 2.f; // vector starts at center, extends to pixel edge.
-    float yMax = pixelPerHeight / 2.f; // vector starts at center, extends to pixel edge.
-    int r = 255;
-    int g = 100;
-    int b = 50;
-    int a = 100;
-    int line_width = 2;
-    typedef itk::ImageRegionIteratorWithIndex<SliceType> ItType;
-    //ItType it(m_Slice, m_Slice->GetBufferedRegion());
-    ItType it(m_Slice, m_Slice->GetLargestPossibleRegion());
-    for(; !it.IsAtEnd(); ++it)
+    if(m_overlayChanged) // recreate display list..
     {
-      SliceType::IndexType index = it.GetIndex();
-      SliceType::PixelType pixel = it.Get();
-      // note: just using pixel[0,1] components <==> proj_{e1,e2}(pixel)
-      float cx = (.5+index[0])*pixelPerWidth; 
-      float cy = (.5+index[1])*pixelPerHeight;
-      float ax = cx - x_facing*pixel[x_index]*xMax*.5; // pixel is normalized vec component.
-      float ay = cy - y_facing*pixel[y_index]*yMax*.5; // pixel is normalized vec component.
-      float bx = cx + x_facing*pixel[x_index]*xMax*.5; // pixel is normalized vec component.
-      float by = cy + y_facing*pixel[y_index]*yMax*.5; // pixel is normalized vec component.
-      DrawLine( ax,ay, bx,by, line_width, r,g,b,a );
-      //DrawRect( ax,ay, 0.2,0.2, r,g,b,a );
+      m_overlayChanged = false;
+      glNewList(m_vectorOverlayList, GL_COMPILE_AND_EXECUTE);
+      // map 2d slice coordinates to 2d gl coordinates:
+      int w = m_Image->GetBufferedRegion().GetSize()[0];
+      int h = m_Image->GetBufferedRegion().GetSize()[1];
+      //SliceType::SizeType size = m_Slice->GetBufferedRegion().GetSize();
+      SliceType::SizeType size = m_Slice->GetLargestPossibleRegion().GetSize();
+      float pixelPerWidth = w / static_cast<float>(size[0]);
+      float pixelPerHeight = h / static_cast<float>(size[0]);
+      float xMax = pixelPerWidth / 2.f; // vector starts at center, extends to pixel edge.
+      float yMax = pixelPerHeight / 2.f; // vector starts at center, extends to pixel edge.
+      int r = 255;
+      int g = 100;
+      int b = 50;
+      int a = 100;
+      int line_width = 2;
+      typedef itk::ImageRegionIteratorWithIndex<SliceType> ItType;
+      //ItType it(m_Slice, m_Slice->GetBufferedRegion());
+      ItType it(m_Slice, m_Slice->GetLargestPossibleRegion());
+      for(; !it.IsAtEnd(); ++it)
+      {
+        SliceType::IndexType index = it.GetIndex();
+        SliceType::PixelType pixel = it.Get();
+        // note: just using pixel[0,1] components <==> proj_{e1,e2}(pixel)
+        float cx = (.5+index[0])*pixelPerWidth; 
+        float cy = (.5+index[1])*pixelPerHeight;
+        float ax = cx - x_facing*pixel[x_index]*xMax*.5; // pixel is normalized vec component.
+        float ay = cy - y_facing*pixel[y_index]*yMax*.5; // pixel is normalized vec component.
+        float bx = cx + x_facing*pixel[x_index]*xMax*.5; // pixel is normalized vec component.
+        float by = cy + y_facing*pixel[y_index]*yMax*.5; // pixel is normalized vec component.
+        DrawLine( ax,ay, bx,by, line_width, r,g,b,a );
+        //DrawRect( ax,ay, 0.2,0.2, r,g,b,a );
+      }
+      glEndList();
+    }
+    else
+    {
+      glCallList(m_vectorOverlayList);
     }
   }
 }
