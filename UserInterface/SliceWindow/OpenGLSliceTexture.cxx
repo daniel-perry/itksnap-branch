@@ -64,25 +64,6 @@ OpenGLSliceTexture
 OpenGLSliceTexture
 ::OpenGLSliceTexture(GLuint components, GLenum format)
 {
-  /*
-  std::cout << "components: " << components << std::endl;
-  std::cout << "format: ";
-  switch(format)
-  {
-  case GL_LUMINANCE:
-    std::cout << "luminance" << std::endl;
-    break;
-  case GL_RGB:
-    std::cout << "rgb" << std::endl;
-    break;
-  case GL_RGBA:
-    std::cout << "rgba" << std::endl;
-    break;
-  default:
-    std::cout<< "unknown" << std::endl;
-  }
-  */
-
   // Set to -1 to force a call to 'generate'
   m_IsTextureInitalized = false;
 
@@ -177,37 +158,6 @@ OpenGLSliceTexture
     m_TextureSize(0), m_TextureSize(1),
     0, m_GlFormat, m_GlType, NULL);
 
-
-  /*
-  std::cout << "components: " << m_GlComponents << std::endl;
-  std::cout << "format: ";
-  switch(m_GlFormat)
-  {
-  case GL_LUMINANCE:
-    std::cout << "luminance" << std::endl;
-    break;
-  case GL_RGB:
-    std::cout << "rgb" << std::endl;
-    break;
-  case GL_RGBA:
-    std::cout << "rgba" << std::endl;
-    break;
-  default:
-    std::cout<< "unknown" << std::endl;
-  }
-  std::cout << "type: ";
-  switch(m_GlType)
-  {
-  case GL_UNSIGNED_BYTE:
-    std::cout << "unsigned byte" << std::endl;
-    break;
-  case GL_FLOAT:
-    std::cout << "float" << std::endl;
-    break;
-  default:
-    std::cout<< "unknown" << std::endl;
-  }
-  */
 
   // Copy a subtexture of correct size into the image
   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, szImage[0], szImage[1],
@@ -305,15 +255,7 @@ OpenGLSliceTexture
     {
       m_overlayChanged = false;
       glNewList(m_vectorOverlayList, GL_COMPILE_AND_EXECUTE);
-      // map 2d slice coordinates to 2d gl coordinates:
-      int w = m_Image->GetBufferedRegion().GetSize()[0];
-      int h = m_Image->GetBufferedRegion().GetSize()[1];
-      //SliceType::SizeType size = m_Slice->GetBufferedRegion().GetSize();
-      SliceType::SizeType size = m_Slice->GetLargestPossibleRegion().GetSize();
-      float pixelPerWidth = w / static_cast<float>(size[0]);
-      float pixelPerHeight = h / static_cast<float>(size[0]);
-      float xMax = pixelPerWidth / 2.f; // vector starts at center, extends to pixel edge.
-      float yMax = pixelPerHeight / 2.f; // vector starts at center, extends to pixel edge.
+      // mapping from 2d slice coordinates to 2d gl coordinates is 1-to-1:
       int r = 255;
       int g = 100;
       int b = 50;
@@ -327,12 +269,13 @@ OpenGLSliceTexture
         SliceType::IndexType index = it.GetIndex();
         SliceType::PixelType pixel = it.Get();
         // note: just using pixel[0,1] components <==> proj_{e1,e2}(pixel)
-        float cx = (.5+index[0])*pixelPerWidth; 
-        float cy = (.5+index[1])*pixelPerHeight;
-        float ax = cx - x_facing*pixel[x_index]*xMax*.5; // pixel is normalized vec component.
-        float ay = cy - y_facing*pixel[y_index]*yMax*.5; // pixel is normalized vec component.
-        float bx = cx + x_facing*pixel[x_index]*xMax*.5; // pixel is normalized vec component.
-        float by = cy + y_facing*pixel[y_index]*yMax*.5; // pixel is normalized vec component.
+        float scale = 0.7; // scales the vector to leave a border at the edges of pixel "box".
+        float cx = (.5+index[0]);
+        float cy = (.5+index[1]);
+        float ax = cx - x_facing*pixel[x_index]*.5*scale; // pixel is normalized vec component.
+        float ay = cy - y_facing*pixel[y_index]*.5*scale; // pixel is normalized vec component.
+        float bx = cx + x_facing*pixel[x_index]*.5*scale; // pixel is normalized vec component.
+        float by = cy + y_facing*pixel[y_index]*.5*scale; // pixel is normalized vec component.
         DrawLine( ax,ay, bx,by, line_width, r,g,b,a );
         //DrawRect( ax,ay, 0.2,0.2, r,g,b,a );
       }

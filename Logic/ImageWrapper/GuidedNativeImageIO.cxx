@@ -437,10 +437,6 @@ GuidedNativeImageIO
     reader->SetFileName(FileName);
     reader->SetImageIO(m_IOBase);
     reader->Update();
-    std::cout << "size: " << reader->GetOutput()->GetLargestPossibleRegion().GetSize() << std::endl;
-    typename ReaderType::OutputImageType::IndexType debug;
-    debug.Fill(10);
-    std::cout << "pixel: " << reader->GetOutput()->GetPixel(debug) << std::endl;
     m_NativeImage = reader->GetOutput();
     }   
 
