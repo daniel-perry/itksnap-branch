@@ -158,10 +158,17 @@ OpenGLSliceTexture
     m_TextureSize(0), m_TextureSize(1),
     0, m_GlFormat, m_GlType, NULL);
 
+  // Mip Map settings...
+  // TODO: use something like bicubic interpolation instead of linear...
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+
+  //Generate the texture with mipmaps
+  gluBuild2DMipmaps( GL_TEXTURE_2D, m_GlFormat, szImage[0], szImage[1], m_GlFormat, m_GlType, m_Buffer ); 
 
   // Copy a subtexture of correct size into the image
-  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, szImage[0], szImage[1],
-    m_GlFormat, m_GlType, m_Buffer);
+  //glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, szImage[0], szImage[1],
+  //  m_GlFormat, m_GlType, m_Buffer);
 
   // Remember the image's timestamp
   m_UpdateTime = m_Image->GetPipelineMTime();
