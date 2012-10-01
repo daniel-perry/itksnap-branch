@@ -5,6 +5,7 @@ This is a branch of the main ITKSnap code... wanted to add some custom features.
 As of right now, here they are:
 
  - vector visualization over a slice (vector overlay).
+ - texture mipmaps to make it usable for larger data sets.
 
 Build instructions:
  - This is branched from this version of ITKSnap: itksnap-2.2.0-20110504-source.tar.gz
