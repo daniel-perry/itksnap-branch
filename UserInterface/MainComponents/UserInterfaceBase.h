@@ -157,6 +157,7 @@ public:
   virtual void OnSliceSliderChange(int id) = 0;
   virtual void UpdatePositionDisplay(int id) = 0;
   virtual void OnSynchronizeCursorAction() = 0;
+  virtual void OnFilterOverlayAction() = 0;
 
   // IRIS: Zoom/pan interaction callbacks
   virtual void OnResetView2DAction(unsigned int window) = 0;

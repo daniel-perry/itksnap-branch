@@ -34,6 +34,7 @@
 =========================================================================*/
 #include <itkRGBAPixel.h>
 #include <itkImageRegionIteratorWithIndex.h>
+#include <itkNeighborhoodIterator.h>
 
 #include "OpenGLSliceTexture.h"
 
@@ -59,6 +60,7 @@ OpenGLSliceTexture
   m_IsVectorOverlay = false;
   m_vectorOverlayList = glGenLists(1);
   m_overlayChanged = true;
+  m_VectorOverlayFilterValue = 0.f;
 }
 
 OpenGLSliceTexture
@@ -80,6 +82,7 @@ OpenGLSliceTexture
   m_IsVectorOverlay = false;
   m_vectorOverlayList = glGenLists(1);
   m_overlayChanged = true;
+  m_VectorOverlayFilterValue = 0.f;
 }
 
 OpenGLSliceTexture
@@ -249,6 +252,24 @@ void DrawRect( float cx, float cy, float w, float h, int r, int g, int b, int a 
     glEnable(GL_TEXTURE_2D); 
 }  
 
+template<class T>
+float diff(const T &p1, const T &p2)
+{
+  return sqrt((p1[0]-p2[0])*(p1[0]-p2[0])+
+              (p1[1]-p2[1])*(p1[1]-p2[1]));
+}
+
+template<class T>
+float neighbordiff(const T & neighbIt)
+{
+  typename T::PixelType center = neighbIt.GetCenterPixel();
+  float neighb_diff = 0;
+  for(size_t i=0; i<neighbIt.Size(); ++i)
+  {
+    neighb_diff += diff(center,neighbIt.GetPixel(i));
+  }
+  return neighb_diff / neighbIt.Size();
+}
 
 void
 OpenGLSliceTexture
@@ -267,23 +288,29 @@ OpenGLSliceTexture
       int b = 50;
       int a = 100;
       int line_width = 2;
-      typedef itk::ImageRegionIteratorWithIndex<SliceType> ItType;
-      //ItType it(m_Slice, m_Slice->GetBufferedRegion());
-      ItType it(m_Slice, m_Slice->GetLargestPossibleRegion());
+      //typedef itk::ImageRegionIteratorWithIndex<SliceType> ItType;
+      typedef itk::NeighborhoodIterator<SliceType> ItType;
+      typename SliceType::SizeType radius;
+      radius.Fill(1);
+      ItType it(radius, m_Slice, m_Slice->GetLargestPossibleRegion());
       for(; !it.IsAtEnd(); ++it)
       {
-        SliceType::IndexType index = it.GetIndex();
-        SliceType::PixelType pixel = it.Get();
-        // note: just using pixel[0,1] components <==> proj_{e1,e2}(pixel)
-        float scale = 0.7; // scales the vector to leave a border at the edges of pixel "box".
-        float cx = (.5+index[0]);
-        float cy = (.5+index[1]);
-        float ax = cx - x_facing*pixel[x_index]*.5*scale; // pixel is normalized vec component.
-        float ay = cy - y_facing*pixel[y_index]*.5*scale; // pixel is normalized vec component.
-        float bx = cx + x_facing*pixel[x_index]*.5*scale; // pixel is normalized vec component.
-        float by = cy + y_facing*pixel[y_index]*.5*scale; // pixel is normalized vec component.
-        DrawLine( ax,ay, bx,by, line_width, r,g,b,a );
-        //DrawRect( ax,ay, 0.2,0.2, r,g,b,a );
+        // if the vector is sufficiently different from its neighborhood, draw it.
+        if(GetVectorOverlayFilterValue() == 0.f ||  neighbordiff(it) > GetVectorOverlayFilterValue() ) 
+        {
+          SliceType::IndexType index = it.GetIndex(it.GetCenterNeighborhoodIndex());
+          SliceType::PixelType pixel = it.GetCenterPixel();
+          // note: just using pixel[0,1] components <==> proj_{e1,e2}(pixel)
+          float scale = 0.7; // scales the vector to leave a border at the edges of pixel "box".
+          float cx = (.5+index[0]);
+          float cy = (.5+index[1]);
+          float ax = cx - x_facing*pixel[x_index]*.5*scale; // pixel is normalized vec component.
+          float ay = cy - y_facing*pixel[y_index]*.5*scale; // pixel is normalized vec component.
+          float bx = cx + x_facing*pixel[x_index]*.5*scale; // pixel is normalized vec component.
+          float by = cy + y_facing*pixel[y_index]*.5*scale; // pixel is normalized vec component.
+          DrawLine( ax,ay, bx,by, line_width, r,g,b,a );
+          //DrawRect( ax,ay, 0.2,0.2, r,g,b,a );
+        }
       }
       glEndList();
     }

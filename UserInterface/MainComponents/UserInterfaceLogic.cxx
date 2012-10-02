@@ -5228,6 +5228,16 @@ void UserInterfaceLogic
 }
 
 void UserInterfaceLogic
+::OnFilterOverlayAction()
+{
+  float filterValue = atof(m_FilterOverlayText->value());
+  for (unsigned int i=0; i<3; i++)
+  {
+    m_IRISWindowManager2D[i]->UpdateOverlayFilterValue(filterValue);
+  }
+}
+
+void UserInterfaceLogic
 ::OnMenuNewSegmentation()
 {
   // Grey image should be loaded

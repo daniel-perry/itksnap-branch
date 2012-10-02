@@ -469,7 +469,7 @@ class UserInterface {open : {public UserInterfaceBase}
                   } {
                     Fl_Group m_GrpToolOptionCrosshairs {
                       label 1
-                      xywh {5 165 135 165} labeltype NO_LABEL labelfont 1 labelsize 12 align 17 hide
+                      xywh {5 165 135 185} labeltype NO_LABEL labelfont 1 labelsize 12 align 17 hide
                     } {
                       Fl_Output m_OutGreyProbe {
                         label {Intensity:}
@@ -491,6 +491,11 @@ class UserInterface {open : {public UserInterfaceBase}
                         label {Multisession cursor}
                         callback {this->OnSynchronizeCursorAction();}
                         tooltip {Synchronizes the crosshair position across multple sessions of ITK-SNAP} xywh {15 285 115 20} down_box DOWN_BOX value 1 labelsize 11
+                      }
+                      Fl_Input m_FilterOverlayText {
+                        label {Filter overlay}
+                        callback {this->OnFilterOverlayAction();}
+                        tooltip {Filter the vector overlay so that only vectors different from their neighbors are shown.} xywh {15 320 115 20} value 0 when FL_WHEN_RELEASE labelsize 11 align 5 textsize 11 
                       }
                     }
                     Fl_Group m_GrpToolOptionPolygon {

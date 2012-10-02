@@ -194,7 +194,9 @@ public:
 
   /** Compute the canvas size needed to display slice at current zoom factor */
   Vector2i GetOptimalCanvasSize();
-  
+
+  void UpdateOverlayFilterValue(float value);
+ 
   /**
    * A parent class from which all the Fl event handlers associated
    * with this class should be derived

@@ -137,6 +137,13 @@ public:
   irisGetMacro(IsVectorOverlay,bool);
   irisSetMacro(IsVectorOverlay,bool);
 
+  void SetVectorOverlayFilterValue(float value)
+  { 
+    m_VectorOverlayFilterValue = value; 
+    m_overlayChanged = true;
+  }
+  float GetVectorOverlayFilterValue(){ return m_VectorOverlayFilterValue; }
+
   /**
    * Make sure that the texture is up to date (reflects the image)
    */
@@ -171,6 +178,7 @@ private:
 
   // hack for overlay vectors..
   bool m_IsVectorOverlay;
+  float m_VectorOverlayFilterValue;
 
   // storing display list for overlay vectors.
   GLuint m_vectorOverlayList;

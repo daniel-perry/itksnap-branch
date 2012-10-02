@@ -538,6 +538,16 @@ GenericSliceWindow
 
 void 
 GenericSliceWindow
+::UpdateOverlayFilterValue(float value)
+{
+  for(OverlayTextureIterator it=m_OverlayTextureList.begin(); it!=m_OverlayTextureList.end(); ++it)
+  {
+    (*it)->SetVectorOverlayFilterValue(value);
+  }
+}
+
+void 
+GenericSliceWindow
 ::DrawSegmentationTexture() 
 {
   // We should have a slice to return

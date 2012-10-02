@@ -788,6 +788,8 @@ protected:
   // Toggle cursor synchronization
   void OnSynchronizeCursorAction();
 
+  void OnFilterOverlayAction();
+
   // Toggle hidden features
   void OnHiddenFeaturesToggleAction();
 
