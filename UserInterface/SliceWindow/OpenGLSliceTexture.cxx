@@ -284,10 +284,10 @@ OpenGLSliceTexture
       glNewList(m_vectorOverlayList, GL_COMPILE_AND_EXECUTE);
       // mapping from 2d slice coordinates to 2d gl coordinates is 1-to-1:
       int r = 255;
-      int g = 100;
-      int b = 50;
+      int g = 10;
+      int b = 10;
       int a = 100;
-      int line_width = 2;
+      int line_width = 4;
       //typedef itk::ImageRegionIteratorWithIndex<SliceType> ItType;
       typedef itk::NeighborhoodIterator<SliceType> ItType;
       typename SliceType::SizeType radius;
