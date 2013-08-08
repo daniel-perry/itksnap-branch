@@ -1062,9 +1062,33 @@ void
 LayerInspectorUILogic
 ::UpdateImageProbe()
 {
+  static Vector3d oldPosition;
+  static int count=0;
   // Code common to SNAP and IRIS
   Vector3ui crosshairs = m_Driver->GetCursorPosition();
   Vector3d xPosition = m_SelectedWrapper->TransformVoxelIndexToPosition(crosshairs);
+  if(Fl::event_state() == 17891328) // shift click
+  {
+    if(oldPosition != xPosition)
+    {
+      switch(count)
+      {
+        case 0:
+          std::cout <<"center,";
+          break;
+        case 1:
+          std::cout <<"topleft,";
+          break;
+        case 2:
+          std::cout <<"bottomright,";
+          break;
+      }
+      std::cout << xPosition << std::endl;
+      oldPosition = xPosition;
+      ++count;
+      count %= 3;
+    }
+  }
   Vector3d xNIFTI = m_SelectedWrapper->TransformVoxelIndexToNIFTICoordinates(to_double(crosshairs));
   for (size_t d = 0; d < 3; ++d)
     {
