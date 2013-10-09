@@ -244,6 +244,9 @@ void usage()
 
   cout << "   --overlay, -o FILE           : " <<
     "Load overlay image FILE; automatically determine grey or RGB" << endl;
+
+  cout << "   --vector, -v FILE           : " <<
+    "Load vector overlay image FILE" << endl;
   
   cout << "   --compact <a|c|s>            : " <<
     "Launch in compact single-slice mode (axial, coronal, sagittal)" << endl;
@@ -279,6 +282,9 @@ int main(int argc, char **argv)
   
   parser.AddOption("--overlay", 1);
   parser.AddSynonim("--overlay", "-o");
+
+  parser.AddOption("--vector", 1);
+  parser.AddSynonim("--vector", "-v");
 
   parser.AddOption("--labels",1);
   parser.AddSynonim("--labels","--label");
@@ -465,7 +471,30 @@ int main(int argc, char **argv)
         return -1;
         }
       }
+
+    // Load vector overlay is supplied
+    if(parseResult.IsOptionPresent("--vector"))
+      {
+      // Get the filename
+      const char *fname = parseResult.GetOptionParameter("--vector");
+
+      // Update the splash screen
+      ui->UpdateSplashScreen("Loading vector overlay image...");
+
+      // Try to load the image
+      try
+        {
+        ui->NonInteractiveLoadVectorOverlayImage(fname);
+        }
+      catch(itk::ExceptionObject &exc)
+        {
+        cerr << "Error loading file '" << fname << "'" << endl;
+        cerr << "Reason: " << exc << endl;
+        return -1;
+        }
+      }
     }
+
 
   // Load labels if supplied
   if(parseResult.IsOptionPresent("--labels"))

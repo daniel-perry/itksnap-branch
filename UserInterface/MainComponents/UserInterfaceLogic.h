@@ -670,6 +670,7 @@ public:
   // Load main image, whether it's RGB or Gray
   void NonInteractiveLoadMainImage(const char *fname, bool force_grey, bool force_rgb);
   void NonInteractiveLoadOverlayImage(const char *fname, bool force_grey, bool force_rgb);
+  void NonInteractiveLoadVectorOverlayImage(const char *fname);
 
   // Update menu of color labels
   // TODO: move this to a separate class in FLTK widget directory

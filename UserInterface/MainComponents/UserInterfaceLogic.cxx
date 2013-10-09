@@ -4718,6 +4718,30 @@ UserInterfaceLogic
 
 void 
 UserInterfaceLogic
+::NonInteractiveLoadVectorOverlayImage(const char *fname)
+{
+  // Load using the right type
+  IRISApplication::MainImageType intype = IRISApplication::MAIN_VECTOR;
+  IRISApplication::MainImageType type = m_Driver->LoadOverlayImage(fname, intype);
+
+  // Update the system's history list
+  m_SystemInterface->UpdateHistory("VectorOverlay",
+    itksys::SystemTools::CollapseFullPath(fname).c_str());
+
+  // Update the overall overlay history
+  m_SystemInterface->UpdateHistory("OverlayImage",
+    itksys::SystemTools::CollapseFullPath(fname).c_str());
+
+  // Set the state
+  m_Activation->UpdateFlag(UIF_OVERLAY_LOADED, true);
+
+  // Update the user interface accordingly
+  OnOverlayImageUpdate();
+}
+
+
+void 
+UserInterfaceLogic
 ::OnMenuLoadRGB() 
 {
   // Make sure the user doesn't lose any data
