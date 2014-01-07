@@ -504,6 +504,7 @@ ADD_LIBRARY(itksnapui ${UI_CXX} ${UI_HEADERS} ${itksnapui_FLTK_UI_SRCS})
 # two lines
 TARGET_LINK_LIBRARIES(itksnaplogic ${SNAP_EXTERNAL_LIBS})
 TARGET_LINK_LIBRARIES(itksnapui itksnaplogic ${SNAP_EXTERNAL_LIBS})
+TARGET_LINK_LIBRARIES(itksnapui ${FONTCONFIG_LIBRARY})
 
 # Designate the SNAP internal libraries
 SET(SNAP_INTERNAL_LIBS itksnapui itksnaplogic)
